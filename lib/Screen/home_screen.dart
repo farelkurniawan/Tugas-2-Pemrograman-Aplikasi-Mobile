@@ -198,7 +198,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   _memberItem(
                     '01',
-                    'Mas Aniess',
+                    'Muhammad Alfarel Yudan Kurniawan',
                     '124240163',
                   ),
 

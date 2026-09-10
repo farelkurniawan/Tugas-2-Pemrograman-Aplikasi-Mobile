@@ -9,62 +9,50 @@ class JumlahBilanganScreen extends StatefulWidget {
 
 class _JumlahBilanganScreenState extends State<JumlahBilanganScreen> {
   static const Color mclarenOrange = Color(0xFFFF8000);
-  
-  // Controller untuk mengambil data dari TextField
+
   final TextEditingController _inputController = TextEditingController();
-  
-  // State untuk menyimpan hasil perhitungan
+
   String _hasilTotal = "-";
 
-  // Fungsi inti untuk validasi dan kalkulasi
   void _hitungTotal() {
     String input = _inputController.text;
-    
-    // Pengecekan input kosong
+
     if (input.trim().isEmpty) {
       _tampilkanError("Input tidak boleh kosong!");
       return;
     }
 
-    // Mengganti semua tanda titik, koma, atau baris baru menjadi spasi
-    // Ini menangani *edge case* pemisah karakter yang aneh-aneh
+    // Samakan semua pemisah yang didukung agar input mudah diproses.
     String normalizedInput = input.replaceAll(RegExp(r'[.,\n]'), ' ');
-    
-    // Memisahkan string berdasarkan spasi (termasuk spasi yang lebih dari satu)
     List<String> angkaList = normalizedInput.split(RegExp(r'\s+'));
-    
-    // Menggunakan BigInt untuk menampung angka hingga triliunan dengan aman
+
+    // BigInt mencegah hasil penjumlahan angka besar kehilangan presisi.
     BigInt total = BigInt.zero;
     List<String> inputInvalid = [];
 
     for (String item in angkaList) {
-      if (item.trim().isEmpty) continue; // Skip jika ada string kosong
-      
+      if (item.trim().isEmpty) continue;
+
       try {
-        // Coba konversi teks ke BigInt
         BigInt angka = BigInt.parse(item);
         total += angka;
       } catch (e) {
-        // Jika gagal (berarti ada input huruf/karakter aneh), tangkap errornya
         inputInvalid.add(item);
       }
     }
 
-    // Jika ada satu saja huruf/karakter yang tidak valid
     if (inputInvalid.isNotEmpty) {
       _tampilkanError("Input tidak valid ditemukan: ${inputInvalid.join(', ')}");
       setState(() {
-        _hasilTotal = "Error"; // Ubah hasil menjadi error
+        _hasilTotal = "Error";
       });
     } else {
-      // Jika semua sukses, update UI
       setState(() {
         _hasilTotal = total.toString();
       });
     }
   }
 
-  // Fungsi penunjang UI untuk menampilkan Pop-up error (SnackBar)
   void _tampilkanError(String pesan) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -77,7 +65,7 @@ class _JumlahBilanganScreenState extends State<JumlahBilanganScreen> {
 
   @override
   void dispose() {
-    _inputController.dispose(); // Jangan lupa membebaskan memori controller
+    _inputController.dispose();
     super.dispose();
   }
 
@@ -95,7 +83,8 @@ class _JumlahBilanganScreenState extends State<JumlahBilanganScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView( // Mencegah UI overflow jika keyboard muncul
+      // Memungkinkan konten tetap dapat digulir saat keyboard terbuka.
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,11 +106,11 @@ class _JumlahBilanganScreenState extends State<JumlahBilanganScreen> {
             ),
             const SizedBox(height: 30),
             
-            // TextField diubah menjadi 1 area besar (mirip dengan referensi Screenshot)
             TextField(
               controller: _inputController,
-              keyboardType: TextInputType.text, // Pakai Text agar user tetap bisa disalahkan kalau ngetik huruf
-              maxLines: 4, 
+              // Teks diperlukan agar input tidak valid dapat ditampilkan sebagai error.
+              keyboardType: TextInputType.text,
+              maxLines: 4,
               decoration: InputDecoration(
                 hintText: 'Contoh: 1500000, 200000. 100000000000',
                 alignLabelWithHint: true,
@@ -150,7 +139,7 @@ class _JumlahBilanganScreenState extends State<JumlahBilanganScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _hitungTotal, // Memanggil fungsi logika
+                onPressed: _hitungTotal,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: mclarenOrange,
                   foregroundColor: Colors.white,
@@ -194,12 +183,12 @@ class _JumlahBilanganScreenState extends State<JumlahBilanganScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    _hasilTotal, // Variabel State dipanggil di sini
+                    _hasilTotal,
                     style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
-                    softWrap: true, // Memastikan jika angkanya sangat panjang, akan turun ke bawah, tidak terpotong
+                    softWrap: true,
                   ),
                 ],
               ),
