@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart'; // FilteringTextInputFormatter
 
 void main() {
   runApp(const MyApp());
@@ -105,13 +105,23 @@ class _GanjilGenapScreenState extends State<GanjilGenapScreen> {
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
                   
-                  // Pasang formatter ribuan otomatis di sini
+                  // Menambahkan FilteringTextInputFormatter.digitsOnly agar 
+                  // sistem secara paksa menolak input selain angka 0-9 (seperti huruf atau simbol).
                   inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly, 
                     RibuanFormatter(),
                   ],
 
                   decoration: InputDecoration(
                     hintText: 'Masukkan angka',
+                    
+                    // CATATAN UNTUK USER
+                    helperText: '* Hanya dapat memasukkan angka (0-9)',
+                    helperStyle: const TextStyle(
+                      color: Colors.black54,
+                      fontStyle: FontStyle.italic,
+                    ),
+
                     prefixIcon: const Icon(
                       Icons.numbers,
                       color: mclarenOrange,
